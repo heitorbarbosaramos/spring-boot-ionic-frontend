@@ -32,7 +32,16 @@ export class ProfilePage {
             this.cliente = response;
             this.getImagesExist();
           },
-          error=>{}) 
+          error=>{
+            if(error.satus == 403){
+              console.log("ERROR 403 NÃO AUTORIZADO profile");
+              this.navCtrl.setRoot('HomePage');
+            }
+          
+          }) 
+    }else{
+      console.log("ERROR 403 NÃO AUTORIZADO profile");
+      this.navCtrl.setRoot('HomePage');
     }
   }
 
