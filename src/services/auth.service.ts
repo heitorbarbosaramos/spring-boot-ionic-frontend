@@ -19,6 +19,11 @@ export class AuthService{
         return this.http.post(`${API_CONFIG.baseUrl}/login`, creds, {observe:'response', responseType:'text'})
     }
 
+    refreshToken(){
+        
+        return this.http.post(`${API_CONFIG.baseUrl}/auth/refresh_token`, {}, {observe:'response', responseType:'text'})
+    }
+
     successfullLogin(authorization: string){
         let tok = authorization.substring(7);
         let user: LocalUser = {
