@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { CidadeDTO } from '../../models/CidadeDTO';
+import { EstadoDTO } from '../../models/EstadoDTO';
+import { CidadeService } from '../../services/domain/Cidade.service';
+import { EstadoService } from '../../services/domain/Estado.service';
 
 /**
  * Generated class for the SingupPage page.
@@ -17,8 +21,16 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 export class SingupPage {
 
   formGroup: FormGroup;
+  estados: EstadoDTO[];
+  cidades: CidadeDTO[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public formBuilder: FormBuilder) {
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams, 
+    public formBuilder: FormBuilder,
+    public cidadeService: CidadeService,
+    public estadoService: EstadoService
+    ) {
     
     this.formGroup = this.formBuilder.group({
       nome:['',[Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
@@ -40,9 +52,24 @@ export class SingupPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad SingupPage');
+    this.estadoService.findAll()
+      .subscribe(response => {
+        this.estados = response;
+        this.formGroup.controls.estadoId.setValue(this.estados[0].id);
+        this.updateCidades();
+      },
+      error => {});
   }
 
+  updateCidades(){
+    let estado_id = this.formGroup.value.estadoId;
+    this.cidadeService.findAll(estado_id)
+      .subscribe(response =>{
+        this.cidades = response;
+        this.formGroup.controls.cidadeId.setValue(null);
+      },
+      error => {});
+  }
   signupUser(){
     console.log('enviou o form');
   }
