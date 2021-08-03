@@ -34,7 +34,7 @@ export class SingupPage {
     
     this.formGroup = this.formBuilder.group({
       nome:['',[Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
-      email:['',Validators.required, Validators.email],
+      email:['',[Validators.required, Validators.email]],
       tipo : ['', [Validators.required]],
       cpfOuCnpj : ['', [Validators.required, Validators.minLength(11), Validators.maxLength(14)]],
       senha : ['', [Validators.required]],
