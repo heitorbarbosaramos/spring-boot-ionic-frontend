@@ -3,6 +3,7 @@ import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS
 import { Observable } from 'rxjs/Rx'; // IMPORTANTE: IMPORT ATUALIZADO
 import { StorageService } from '../services/storage.service';
 import { AlertController } from 'ionic-angular';
+import { FieldMessage } from '../models/fieldmessage';
 
 @Injectable()
 export class ErrorInterceptors implements HttpInterceptor {
@@ -37,6 +38,11 @@ export class ErrorInterceptors implements HttpInterceptor {
                 this.handle403();
                 break;
 
+                case 422:
+                    console.log("ERRROU 422 BEM AQUI")
+                    this.handle422(errorObj);
+                    break;
+
                 default:
                     this.handleDefaultError(errorObj);
                     break;
@@ -65,6 +71,18 @@ export class ErrorInterceptors implements HttpInterceptor {
         // this.navCtrl.setRoot('HomePage');
     }
 
+    handle422(errorObj){
+        let alert = this.alertCtrl.create({
+            title: 'Erro 422: Validações',
+            message: this.listErrors(errorObj.errors),
+            enableBackdropDismiss:false,
+            buttons:[
+                {text: 'Ok'}
+            ]
+        });
+        alert.present();
+    }
+
     handleDefaultError(errorObj){
         let alert = this.alertCtrl.create({
             title: 'Erro ' + errorObj.status + ' : ' + errorObj.error ,
@@ -75,6 +93,14 @@ export class ErrorInterceptors implements HttpInterceptor {
             ]
         });
         alert.present();
+    }
+
+    private listErrors(message : FieldMessage[]) : string {
+        let s : string = '';
+        for(var i = 0; i < message.length; i++){
+            s = s + '<p><strong>' + message[i].field + "</strong>: " + message[i].message + "</p>";
+        }   
+        return s;
     }
 
 }

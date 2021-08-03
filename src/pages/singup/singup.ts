@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AlertController } from 'ionic-angular';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { CidadeDTO } from '../../models/CidadeDTO';
 import { EstadoDTO } from '../../models/EstadoDTO';
 import { CidadeService } from '../../services/domain/Cidade.service';
+import { ClienteService } from '../../services/domain/cliente.service';
 import { EstadoService } from '../../services/domain/Estado.service';
 
 /**
@@ -29,7 +31,9 @@ export class SingupPage {
     public navParams: NavParams, 
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
-    public estadoService: EstadoService
+    public estadoService: EstadoService,
+    public clienteService: ClienteService,
+    public alertCtrl: AlertController
     ) {
     
     this.formGroup = this.formBuilder.group({
@@ -71,7 +75,25 @@ export class SingupPage {
       error => {});
   }
   signupUser(){
-    console.log('enviou o form');
+    this.clienteService.insert(this.formGroup.value)
+      .subscribe(response => {
+        this.showInsertOk();
+      })
+    console.log(this.formGroup.value);
   }
 
+  showInsertOk(){
+    let alert = this.alertCtrl.create({
+      title: 'Sucesso!',
+      message: 'Cadastrado efetuado com sucesso',
+      enableBackdropDismiss:false,
+      buttons:[{
+        text: 'Ok',
+        handler:()=> {
+          this.navCtrl.pop();
+        }
+      }]
+    });
+    alert.present();
+  }
 }
